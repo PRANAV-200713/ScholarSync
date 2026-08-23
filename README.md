@@ -71,9 +71,3 @@
 
 ## 📄 License
 This project is licensed under the MIT License.
-
-## TEAM NAME:LAST OF US
-## TEAM MEMBERS: 
-   1)A.PRANAV
-   2)AKHIL KRISHNA
-   3)NAVEENDRAN G

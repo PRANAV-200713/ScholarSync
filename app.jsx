@@ -5166,6 +5166,22 @@ const [reelsContentType, setReelsContentType] = useState('shorts'); // 'shorts' 
   const [debugReelTelemetry, setDebugReelTelemetry] = useState(null);
   const [showDeepLearnModal, setShowDeepLearnModal] = useState(false);
   const [deepLearnSelectedReel, setDeepLearnSelectedReel] = useState(null);
+  const [showReelsDisclaimer, setShowReelsDisclaimer] = useState(false);
+
+  // Auto-open AI Reels Disclaimer once on fresh entry
+  useEffect(() => {
+    if (activeTab === 'reels') {
+      try {
+        const hasSeen = sessionStorage.getItem('ss_reels_disclaimer_viewed');
+        if (!hasSeen) {
+          setShowReelsDisclaimer(true);
+          sessionStorage.setItem('ss_reels_disclaimer_viewed', 'true');
+        }
+      } catch (e) {
+        setShowReelsDisclaimer(true);
+      }
+    }
+  }, [activeTab]);
 
   // IntersectionObserver for active vertical Reel playback control
   useEffect(() => {
@@ -6352,6 +6368,14 @@ const [reelsContentType, setReelsContentType] = useState('shorts'); // 'shorts' 
               </button>
             </div>
           </header>
+
+          {/* COMPACT TOP DEVELOPMENT NOTICE (SHORT SIZE, NON-INTRUSIVE) */}
+          <div className="w-full max-w-3xl mx-auto -mt-6 sm:-mt-10 mb-2 p-2.5 sm:p-3 rounded-2xl bg-amber-950/30 backdrop-blur-md border border-amber-500/25 shadow-lg flex items-center justify-center gap-2.5 text-center">
+            <span className="text-xs sm:text-sm flex-shrink-0">🚧</span>
+            <p className="text-[11px] sm:text-xs text-slate-300 leading-snug font-light">
+              <strong className="text-amber-300 font-bold">Development Notice:</strong> Review &amp; demo version. Experimental features (including AI Reels) are available for evaluation and may have limited functionality due to third-party restrictions.
+            </p>
+          </div>
 
           {/* 2. HERO SECTION — USP & PRIMARY CALL TO ACTION */}
           <main className="flex flex-col items-center text-center pt-8 pb-4">
@@ -8151,64 +8175,71 @@ const [reelsContentType, setReelsContentType] = useState('shorts'); // 'shorts' 
           {/* =========================================================================
              DESKTOP FIXED LEFT SIDEBAR (COLLAPSIBLE ON DESKTOP ONLY: hidden md:flex)
           ========================================================================= */}
-          <aside className={'hidden md:flex flex-col justify-between p-3.5 sticky top-0 h-screen z-40 bg-dark-950/40 backdrop-blur-md border-r border-amber-500/20 transition-all duration-300 ease-in-out ' + (isSidebarCollapsed ? 'w-20' : 'w-64')}>
-            <div>
-              {/* Header & Logo + Minimize/Expand Toggle */}
-              <div className="flex items-center justify-between gap-2 mb-5">
-                <div 
-                  onClick={() => setCurrentScreen('landing')}
-                  className={'flex items-center gap-3 px-1.5 py-1.5 rounded-xl cursor-pointer hover:bg-white/5 transition-colors ' + (isSidebarCollapsed ? 'mx-auto justify-center' : '')}
-                  title="Click to return to Landing Page"
-                >
-                  <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-600 via-amber-500 to-crimson-600 flex items-center justify-center font-extrabold text-lg text-white shadow-lg shadow-amber-600/30 border border-amber-400/40 flex-shrink-0">
-                    S
-                  </div>
-                  {!isSidebarCollapsed && (
-                    <div className="overflow-hidden">
-                      <h2 className="font-extrabold text-base tracking-tight text-white leading-none truncate">ScholarSync</h2>
-                      <p className="text-[10px] text-amber-400 font-medium mt-1 truncate">
-                        Day {profile.sprintDay || 1} • {activeDayCompany.name}
-                      </p>
+                    <aside className={'hidden md:flex flex-col justify-between px-3 py-3 sticky top-0 h-screen max-h-screen z-40 bg-dark-950/95 backdrop-blur-xl border-r border-amber-500/20 transition-all duration-300 ease-in-out ' + (isSidebarCollapsed ? 'w-20' : 'w-64')}>
+            <div className="flex flex-col h-full min-h-0 justify-between">
+              {/* Top Header & Logo */}
+              <div className="flex-shrink-0">
+                <div className="flex items-center justify-between gap-2 mb-3">
+                  <div 
+                    onClick={() => setCurrentScreen('landing')}
+                    className={'flex items-center gap-2.5 px-1 py-1 rounded-xl cursor-pointer hover:bg-white/5 transition-colors ' + (isSidebarCollapsed ? 'mx-auto justify-center' : '')}
+                    title="Click to return to Landing Page"
+                  >
+                    <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-600 via-amber-500 to-crimson-600 flex items-center justify-center font-extrabold text-base text-white shadow-lg shadow-amber-600/30 border border-amber-400/40 flex-shrink-0">
+                      S
                     </div>
-                  )}
+                    {!isSidebarCollapsed && (
+                      <div className="overflow-hidden">
+                        <h2 className="font-extrabold text-sm tracking-tight text-white leading-none truncate">ScholarSync</h2>
+                        <p className="text-[10px] text-amber-400 font-medium mt-1 truncate">
+                          Day {profile.sprintDay || 1} • {activeDayCompany.name}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                    className="p-1.5 rounded-lg bg-white/5 hover:bg-amber-500/20 text-slate-400 hover:text-amber-300 border border-white/10 transition-all flex items-center justify-center flex-shrink-0 cursor-pointer"
+                    title={isSidebarCollapsed ? "Expand Sidebar" : "Minimize Sidebar"}
+                  >
+                    {isSidebarCollapsed ? (
+                      <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                        <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+                      </svg>
+                    ) : (
+                      <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                        <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/>
+                      </svg>
+                    )}
+                  </button>
                 </div>
 
-                <button
-                  onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-                  className="p-1.5 rounded-xl bg-white/5 hover:bg-amber-500/20 text-slate-400 hover:text-amber-300 border border-white/10 transition-all text-xs font-bold flex items-center justify-center flex-shrink-0"
-                  title={isSidebarCollapsed ? "Expand Sidebar" : "Minimize Sidebar"}
-                >
-                  {isSidebarCollapsed ? '▶' : '◀'}
-                </button>
+                {/* Readiness Card */}
+                {!isSidebarCollapsed ? (
+                  <div className="glass-card p-2.5 mb-2.5 border-amber-500/20 bg-amber-950/20">
+                    <div className="flex items-center justify-between text-xs mb-1">
+                      <span className="text-slate-400 font-light text-[11px]">Readiness Index</span>
+                      <span className="font-bold text-amber-300 text-xs">{readinessScore}/100</span>
+                    </div>
+                    <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-amber-500 to-crimson-500 rounded-full" style={{ width: readinessScore + '%' }}></div>
+                    </div>
+                  </div>
+                ) : (
+                  <div 
+                    className="glass-card p-1.5 text-center mb-2.5 border-amber-500/20 bg-amber-950/30 rounded-xl cursor-pointer hover:border-amber-400/40 transition-all"
+                    title={'Placement Readiness Score: ' + readinessScore + '/100'}
+                    onClick={() => setActiveTab('simulator')}
+                  >
+                    <span className="text-[9px] text-slate-400 block font-light leading-none">Score</span>
+                    <span className="text-xs font-extrabold text-amber-300 mt-0.5 block">{readinessScore}%</span>
+                  </div>
+                )}
               </div>
 
-              {/* Readiness Card */}
-              {!isSidebarCollapsed ? (
-                <div className="glass-card p-3.5 mb-5 border-amber-500/20 bg-amber-950/20 animate-fadeIn">
-                  <div className="flex items-center justify-between text-xs mb-1.5">
-                    <span className="text-slate-400 font-light">Readiness Index</span>
-                    <span className="font-bold text-amber-300">{readinessScore}/100</span>
-                  </div>
-                  <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-amber-500 to-crimson-500 rounded-full" style={{ width: readinessScore + '%' }}></div>
-                  </div>
-                  <p className="text-[10px] text-slate-400 mt-2 truncate font-light">
-                    Day {profile.sprintDay || 1}: {profile.role || 'SDE'} @ {activeDayCompany.name}
-                  </p>
-                </div>
-              ) : (
-                <div 
-                  className="glass-card p-2 text-center mb-5 border-amber-500/20 bg-amber-950/30 rounded-xl cursor-pointer hover:border-amber-400/40 transition-all animate-fadeIn"
-                  title={'Placement Readiness Score: ' + readinessScore + '/100\nTarget: ' + activeDayCompany.name}
-                  onClick={() => setActiveTab('simulator')}
-                >
-                  <span className="text-[9px] text-slate-400 block font-light leading-none">Score</span>
-                  <span className="text-xs font-extrabold text-amber-300 mt-0.5 block">{readinessScore}%</span>
-                </div>
-              )}
-
-              {/* Navigation Items (Order: Dashboard -> AI Mock Interview -> ScholarSync AI -> Prep Courses) */}
-              <nav className="space-y-1.5">
+              {/* Scrollable Navigation Area (Ensures zero vertical overflow on laptop screens!) */}
+              <nav className="flex-1 overflow-y-auto pr-1 space-y-1 my-1 custom-scrollbar min-h-0">
                 {[
                   { id: 'home', icon: '\u{1F3E0}', label: 'Dashboard' },
                   { id: 'mock-interview', icon: '\u{1F399}\u{FE0F}', label: 'AI Mock Interview' },
@@ -8230,22 +8261,22 @@ const [reelsContentType, setReelsContentType] = useState('shorts'); // 'shorts' 
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
                       title={isSidebarCollapsed ? tab.label : ''}
-                      className={'w-full flex items-center ' + (isSidebarCollapsed ? 'justify-center p-2.5' : 'justify-between px-3.5 py-2.5') + ' rounded-xl text-sm font-medium transition-all relative ' + (
+                      className={'w-full flex items-center ' + (isSidebarCollapsed ? 'justify-center p-2' : 'justify-between px-3 py-2') + ' rounded-xl text-xs font-medium transition-all relative ' + (
                         active
-                          ? 'bg-gradient-to-r from-amber-600/30 to-crimson-600/25 text-white border border-amber-500/50 shadow-lg shadow-amber-500/10 font-bold'
+                          ? 'bg-gradient-to-r from-amber-600/30 to-crimson-600/25 text-white border border-amber-500/50 shadow-md font-bold'
                           : isAiTab
-                            ? 'border border-amber-500/20 bg-amber-500/5 text-amber-200/90 hover:bg-amber-500/15 hover:text-amber-100 hover:border-amber-400/40 font-medium'
+                            ? 'border border-amber-500/20 bg-amber-500/5 text-amber-200/90 hover:bg-amber-500/15 hover:text-amber-100 font-medium'
                             : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 font-light'
                       )}
                     >
-                      <div className={'flex items-center ' + (isSidebarCollapsed ? 'justify-center' : 'gap-3')}>
+                      <div className={'flex items-center ' + (isSidebarCollapsed ? 'justify-center' : 'gap-2.5')}>
                         {tab.isAi ? (
-                          <img src={SCHOLARSYNC_AI_LOGO} alt="AI" className="w-5 h-5 rounded-md object-cover border border-amber-400/60 shadow-sm flex-shrink-0" />
+                          <img src={SCHOLARSYNC_AI_LOGO} alt="AI" className="w-4 h-4 rounded-md object-cover border border-amber-400/60 shadow-sm flex-shrink-0" />
                         ) : (
-                          <span className={'text-base ' + (isAiTab && !active ? 'text-amber-400' : '')}>{tab.icon}</span>
+                          <span className={'text-sm ' + (isAiTab && !active ? 'text-amber-400' : '')}>{tab.icon}</span>
                         )}
                         {!isSidebarCollapsed && (
-                          <span className={isAiTab && !active ? 'text-amber-300 font-semibold' : ''}>
+                          <span className={'truncate ' + (isAiTab && !active ? 'text-amber-300 font-semibold' : '')}>
                             {tab.label}
                           </span>
                         )}
@@ -8254,33 +8285,18 @@ const [reelsContentType, setReelsContentType] = useState('shorts'); // 'shorts' 
                       {!isSidebarCollapsed && (
                         <>
                           {tab.id === 'scholarsync-ai' && (
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500/30 to-crimson-500/30 text-amber-300 font-extrabold border border-amber-500/40 shadow-sm animate-pulse">
+                            <span className="text-[9px] px-1 py-0.5 rounded bg-gradient-to-r from-amber-500/30 to-crimson-500/30 text-amber-300 font-extrabold border border-amber-500/40">
                               AI
                             </span>
                           )}
                           {tab.id === 'mock-interview' && (
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-crimson-500/25 text-crimson-300 font-bold border border-crimson-500/30 animate-pulse">
-                              4-Q SIM
+                            <span className="text-[9px] px-1 py-0.5 rounded bg-crimson-500/25 text-crimson-300 font-bold border border-crimson-500/30">
+                              SIM
                             </span>
                           )}
                           {tab.id === 'courses' && (
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold">
+                            <span className="text-[9px] px-1 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">
                               NEW
-                            </span>
-                          )}
-                          {tab.id === 'gap-analyzer' && (
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold">
-                              AI
-                            </span>
-                          )}
-                          {tab.id === 'news' && (
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-crimson-500/20 text-crimson-300 font-bold border border-crimson-500/30">
-                              LIVE
-                            </span>
-                          )}
-                          {tab.id === 'resume' && resumeData.analysis && (
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold">
-                              {resumeData.analysis.score}
                             </span>
                           )}
                         </>
@@ -8289,21 +8305,45 @@ const [reelsContentType, setReelsContentType] = useState('shorts'); // 'shorts' 
                   );
                 })}
               </nav>
-            </div>
 
-            {/* Desktop Footer Profile & Logout */}
-            <div className="pt-3 border-t border-white/10 space-y-2">
-              {!isSidebarCollapsed ? (
-                <>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2.5 overflow-hidden">
-                      <div className="w-8 h-8 rounded-full bg-amber-600/30 border border-amber-400/40 flex items-center justify-center text-xs font-bold text-amber-300 flex-shrink-0">
+              {/* Desktop Footer Profile & Pinned Log Out Button (GUARANTEED VISIBLE ABOVE TASKBAR) */}
+              <div className="flex-shrink-0 pt-2.5 pb-1 border-t border-white/10 mt-auto bg-dark-950/95 space-y-2">
+                {!isSidebarCollapsed ? (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 px-1">
+                      <div className="w-7 h-7 rounded-full bg-amber-600/30 border border-amber-400/40 flex items-center justify-center text-xs font-bold text-amber-300 flex-shrink-0">
                         {profile.name ? profile.name.charAt(0).toUpperCase() : 'U'}
                       </div>
                       <div className="truncate">
-                        <p className="text-xs font-bold text-white truncate">{profile.name || 'Candidate'}</p>
-                        <p className="text-[10px] text-slate-400 truncate font-light">Day {profile.sprintDay || 1} â€¢ @{profile.username || 'user'}</p>
+                        <p className="text-xs font-bold text-white truncate leading-tight">{profile.name || 'Candidate'}</p>
+                        <p className="text-[10px] text-slate-400 truncate leading-tight font-light">Day {profile.sprintDay || 1} • @{profile.username || 'user'}</p>
                       </div>
+                    </div>
+
+                    <button 
+                      onClick={() => {
+                        setAuthRole('none');
+                        setProfile(BLANK_PROFILE);
+                        setCurrentScreen('landing');
+                        showToast('Signed out of session.', 'info');
+                      }}
+                      className="w-full py-1.5 px-3 rounded-xl bg-crimson-950/80 hover:bg-crimson-600 text-crimson-300 hover:text-white border border-crimson-500/40 text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-md cursor-pointer active:scale-95"
+                      title="Log Out of Session"
+                    >
+                      <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                        <path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 0 1 2 2v2h-2V4H5v16h9v-2h2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9z"/>
+                      </svg>
+                      <span>Log Out</span>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center gap-2">
+                    <div 
+                      className="w-7 h-7 rounded-full bg-amber-600/30 border border-amber-400/40 flex items-center justify-center text-xs font-bold text-amber-300 cursor-pointer"
+                      title={profile.name || 'Candidate'}
+                      onClick={() => setActiveTab('profile')}
+                    >
+                      {profile.name ? profile.name.charAt(0).toUpperCase() : 'U'}
                     </div>
                     <button 
                       onClick={() => {
@@ -8312,36 +8352,16 @@ const [reelsContentType, setReelsContentType] = useState('shorts'); // 'shorts' 
                         setCurrentScreen('landing');
                         showToast('Signed out of session.', 'info');
                       }}
-                      className="text-slate-400 hover:text-crimson-400 p-1 text-xs transition-colors"
-                      title="Sign Out"
+                      className="p-2 rounded-xl bg-crimson-950/80 hover:bg-crimson-600 text-crimson-300 hover:text-white border border-crimson-500/40 transition-all flex items-center justify-center cursor-pointer shadow-md"
+                      title="Log Out"
                     >
-                      ðŸšª
+                      <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                        <path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 0 1 2 2v2h-2V4H5v16h9v-2h2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9z"/>
+                      </svg>
                     </button>
                   </div>
-                </>
-              ) : (
-                <div className="flex flex-col items-center gap-2">
-                  <div 
-                    className="w-8 h-8 rounded-full bg-amber-600/30 border border-amber-400/40 flex items-center justify-center text-xs font-bold text-amber-300 cursor-pointer"
-                    title={profile.name || 'Candidate'}
-                    onClick={() => setActiveTab('profile')}
-                  >
-                    {profile.name ? profile.name.charAt(0).toUpperCase() : 'U'}
-                  </div>
-                  <button 
-                    onClick={() => {
-                      setAuthRole('none');
-                      setProfile(BLANK_PROFILE);
-                      setCurrentScreen('landing');
-                      showToast('Signed out of session.', 'info');
-                    }}
-                    className="text-slate-400 hover:text-crimson-400 p-1 text-xs transition-colors"
-                    title="Sign Out"
-                  >
-                    ðŸšª
-                  </button>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </aside>
 
@@ -8420,14 +8440,14 @@ const [reelsContentType, setReelsContentType] = useState('shorts'); // 'shorts' 
                   <div className="flex items-center gap-2.5 flex-wrap">
                     <button
                       onClick={() => setActiveTab('mock-interview')}
-                      className="px-4 py-2 rounded-xl glass-card text-xs font-bold text-crimson-300 hover:text-white border-crimson-500/30 flex items-center gap-1.5 transition-all shadow-md"
+                      className="px-3.5 py-2 rounded-xl glass-card text-xs font-bold text-crimson-300 hover:text-white border-crimson-500/30 flex items-center gap-1.5 transition-all shadow-md cursor-pointer"
                     >
                       <span>🎙️</span>
                       <span>AI Mock Interview</span>
                     </button>
                     <button
                       onClick={() => setActiveTab('resume')}
-                      className="px-4 py-2 rounded-xl btn-gold glow-gold-pulse text-xs font-bold transition-all flex items-center gap-2"
+                      className="px-3.5 py-2 rounded-xl btn-gold glow-gold-pulse text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
                     >
                       <span>📄</span>
                       <span>Resume AI</span>
@@ -8439,9 +8459,25 @@ const [reelsContentType, setReelsContentType] = useState('shorts'); // 'shorts' 
                         setActiveTab('quiz');
                         showToast('⚡ Diagnostic bank reshuffled with fresh randomized questions.', 'info');
                       }}
-                      className="px-4 py-2 rounded-xl glass-card text-xs font-medium text-slate-200 hover:text-white border-white/10"
+                      className="px-3.5 py-2 rounded-xl glass-card text-xs font-medium text-slate-200 hover:text-white border-white/10 flex items-center gap-1.5 cursor-pointer"
                     >
-                      ⚡ Diagnostic Quiz
+                      <span>⚡</span>
+                      <span>Diagnostic Quiz</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setAuthRole('none');
+                        setProfile(BLANK_PROFILE);
+                        setCurrentScreen('landing');
+                        showToast('Signed out of session.', 'info');
+                      }}
+                      className="px-3.5 py-2 rounded-xl bg-crimson-950/80 hover:bg-crimson-600 text-crimson-300 hover:text-white border border-crimson-500/50 text-xs font-bold transition-all flex items-center gap-1.5 shadow-md cursor-pointer active:scale-95"
+                      title="Log Out"
+                    >
+                      <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                        <path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 0 1 2 2v2h-2V4H5v16h9v-2h2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9z"/>
+                      </svg>
+                      <span>Log Out</span>
                     </button>
                   </div>
                 </div>
@@ -10106,6 +10142,50 @@ const [reelsContentType, setReelsContentType] = useState('shorts'); // 'shorts' 
             ========================================================================= */}
             {activeTab === 'reels' && (
               <div className="space-y-4 animate-fadeIn max-w-4xl mx-auto pb-12">
+                {/* 🚧 AI Reels — Under Development Disclaimer Modal */}
+                {showReelsDisclaimer && (
+                  <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
+                    <div className="relative w-full max-w-lg glass-panel p-6 md:p-8 rounded-3xl border-2 border-amber-500/50 bg-gradient-to-b from-dark-900 via-dark-950 to-amber-950/40 shadow-2xl space-y-5 animate-scaleUp">
+                      <button
+                        onClick={() => setShowReelsDisclaimer(false)}
+                        className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 text-slate-400 hover:text-white border border-white/10 flex items-center justify-center text-xs transition-all cursor-pointer"
+                        title="Close Notice"
+                      >
+                        ✕
+                      </button>
+
+                      <div className="flex items-center gap-3.5">
+                        <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-2xl flex-shrink-0 shadow-lg shadow-amber-500/20">
+                          🚧
+                        </div>
+                        <div>
+                          <h3 className="text-lg md:text-xl font-black text-white leading-tight">
+                            AI Reels — Under Development
+                          </h3>
+                          <p className="text-xs text-amber-400 font-semibold mt-0.5">
+                            YouTube Playback & Embedding Policy Notice
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="p-4 rounded-2xl bg-amber-950/40 border border-amber-500/30 space-y-2">
+                        <p className="text-xs md:text-sm text-slate-200 leading-relaxed font-normal">
+                          Some YouTube videos may not play directly in ScholarSync because embedding can be restricted by YouTube or individual video creators. We’re currently improving this feature while following YouTube’s embedding policies. Some Reels may therefore be unavailable.
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-end gap-3 pt-1">
+                        <button
+                          onClick={() => setShowReelsDisclaimer(false)}
+                          className="px-6 py-2.5 rounded-xl btn-gold text-xs font-black shadow-lg hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+                        >
+                          Got It, Continue
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Header Banner */}
                 <div className="glass-panel p-4 md:p-5 rounded-3xl border border-crimson-500/25 shadow-2xl flex flex-col md:flex-row justify-between items-center gap-3">
                   <div className="flex items-center gap-3">
@@ -10127,9 +10207,18 @@ const [reelsContentType, setReelsContentType] = useState('shorts'); // 'shorts' 
 
                   <div className="flex items-center gap-2">
                     <button
+                      onClick={() => setShowReelsDisclaimer(true)}
+                      className="px-3 py-1.5 rounded-xl bg-amber-950/60 hover:bg-amber-500/20 text-amber-300 hover:text-white border border-amber-500/40 text-xs font-bold transition-all flex items-center gap-1.5 shadow-md cursor-pointer active:scale-95"
+                      title="View AI Reels Notice & Disclaimer"
+                    >
+                      <span>🚧</span>
+                      <span>Disclaimer</span>
+                    </button>
+
+                    <button
                       onClick={() => loadReelsForTopic(selectedReelTopic, reelsContentType)}
                       disabled={isReelsLoading}
-                      className="px-3.5 py-1.5 rounded-xl glass-card text-xs font-semibold text-amber-300 hover:text-white border-amber-500/30 flex items-center gap-1.5 transition-all shadow-md"
+                      className="px-3.5 py-1.5 rounded-xl glass-card text-xs font-semibold text-amber-300 hover:text-white border-amber-500/30 flex items-center gap-1.5 transition-all shadow-md cursor-pointer"
                     >
                       <span>{isReelsLoading ? '⏳' : '🔄'}</span>
                       <span>{isReelsLoading ? 'Updating...' : 'Refresh'}</span>
