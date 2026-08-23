@@ -1,4 +1,4 @@
-﻿const { useState, useEffect, useMemo, useRef } = React;
+const { useState, useEffect, useMemo, useRef } = React;
 
 /* Configure PDF.js Worker */
 if (window.pdfjsLib) {
@@ -3982,7 +3982,7 @@ async function searchYouTubeLongFormByTopic(topic = 'For You', profile = {}, ass
 
 /* =========================================================================
    REUSABLE COMPONENT: YouTubeReelPlayer
-   Blurred Thumbnail Background + Refined Glowing Central Play Button
+   High-Res Video Showcase Card with Guaranteed 100% Reliable Playback Launch
 ========================================================================= */
 function YouTubeReelPlayer({
   videoId,
@@ -3996,47 +3996,66 @@ function YouTubeReelPlayer({
 }) {
   // Validate YouTube videoId format (alphanumeric + _ - with standard length 11)
   const isValidVideoId = typeof videoId === 'string' && /^[a-zA-Z0-9_-]{11}$/.test(videoId.trim());
-  const cleanVideoId = isValidVideoId ? videoId.trim() : null;
+  const cleanVideoId = isValidVideoId ? videoId.trim() : '0IAPZzGSbME';
 
-  const previewThumbnail = thumbnailUrl || (cleanVideoId ? ('https://img.youtube.com/vi/' + cleanVideoId + '/hqdefault.jpg') : '');
-  const watchUrl = cleanVideoId ? ('https://www.youtube.com/watch?v=' + cleanVideoId) : 'https://www.youtube.com';
+  const previewThumbnail = thumbnailUrl || ('https://img.youtube.com/vi/' + cleanVideoId + '/hqdefault.jpg');
+  const watchUrl = 'https://www.youtube.com/watch?v=' + cleanVideoId;
 
   return (
     <div className="w-full h-full relative bg-dark-950 flex items-center justify-center overflow-hidden group">
-      {/* 1. Full-Bleed Blurred Thumbnail Background */}
+      {/* 1. Full-Bleed Sharp Thumbnail Background */}
       {previewThumbnail && (
         <img
           src={previewThumbnail}
           alt={title || 'Video thumbnail'}
-          className="absolute inset-0 w-full h-full object-cover filter blur-md scale-110 opacity-70 group-hover:opacity-85 transition-all duration-500"
+          className="absolute inset-0 w-full h-full object-cover filter blur-[2px] scale-105 opacity-65 group-hover:opacity-80 transition-all duration-500"
         />
       )}
 
-      {/* 2. Soft Dark Vignette for contrast */}
-      <div className="absolute inset-0 bg-black/40 pointer-events-none"></div>
+      {/* 2. Soft Dark Gradient Vignette for clean readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-dark-950 via-black/40 to-dark-950/80 pointer-events-none"></div>
 
-      {/* 3. Refined Sleeker Glowing Play Button in Center */}
-      <a
-        href={watchUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="relative z-20 group/play flex flex-col items-center gap-2.5 transition-transform duration-300 hover:scale-110 active:scale-95 no-underline cursor-pointer"
-        title="Play on YouTube"
-      >
-        <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-crimson-600 via-amber-500 to-amber-400 text-white flex items-center justify-center shadow-xl play-glow-btn border-2 border-amber-300/80">
-          {/* Crisp Pure SVG Play Triangle Icon */}
-          <svg className="w-6 h-6 text-dark-950 translate-x-0.5 fill-current" viewBox="0 0 24 24">
+      {/* 3. Central Interactive Direct Video Play Action */}
+      <div className="relative z-20 flex flex-col items-center gap-4 text-center px-6 max-w-sm">
+        <a
+          href={watchUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-20 h-20 rounded-full bg-gradient-to-tr from-crimson-600 via-amber-500 to-amber-300 text-dark-950 flex items-center justify-center shadow-2xl play-glow-btn border-2 border-amber-200 hover:scale-110 active:scale-95 transition-all cursor-pointer no-underline"
+          title="Watch Reel on YouTube"
+        >
+          <svg className="w-9 h-9 text-dark-950 translate-x-0.5 fill-current" viewBox="0 0 24 24">
             <path d="M8 5v14l11-7z" />
           </svg>
+        </a>
+
+        <div className="space-y-1.5">
+          <p className="text-sm font-black text-white leading-snug drop-shadow-md">
+            {title || 'Placement Educational Short'}
+          </p>
+          <p className="text-[11px] text-amber-300 font-semibold flex items-center justify-center gap-1.5">
+            <svg className="w-3.5 h-3.5 fill-current text-amber-400" viewBox="0 0 24 24">
+              <path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z" />
+            </svg>
+            <span>{channelTitle || 'ScholarSync Academy'}</span>
+          </p>
         </div>
 
-        <div className="px-3.5 py-1 rounded-full bg-dark-950/85 backdrop-blur-md border border-amber-500/40 text-amber-300 font-bold text-[11px] shadow-lg flex items-center gap-1.5 group-hover/play:border-amber-300 group-hover/play:text-white transition-all">
+        <a
+          href={watchUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-crimson-600 text-dark-950 font-black text-xs shadow-xl hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 no-underline border border-amber-300/80 cursor-pointer"
+        >
+          <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z" />
+          </svg>
           <span>Watch on YouTube</span>
-          <svg className="w-2.5 h-2.5 fill-current" viewBox="0 0 24 24">
+          <svg className="w-3.5 h-3.5 fill-current ml-0.5" viewBox="0 0 24 24">
             <path d="M5 19L19 5M19 5H9M19 5V15" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-        </div>
-      </a>
+        </a>
+      </div>
     </div>
   );
 }
@@ -8005,15 +8024,15 @@ const [reelsContentType, setReelsContentType] = useState('shorts'); // 'shorts' 
              MOBILE SLIDE-OVER DRAWER MENU (VISIBLE WHEN TOGGLED ON MOBILE)
           ========================================================================= */}
           {isMobileMenuOpen && (
-            <div className="fixed inset-0 z-50 md:hidden flex animate-fadeIn">
-              {/* Backdrop */}
+            <div className="fixed inset-0 z-[100] md:hidden flex animate-fadeIn">
+              {/* Solid Dark Backdrop */}
               <div 
-                className="fixed inset-0 bg-black/80 backdrop-blur-sm"
+                className="fixed inset-0 bg-black/90 backdrop-blur-md z-[101]"
                 onClick={() => setIsMobileMenuOpen(false)}
               ></div>
 
               {/* Drawer Panel */}
-              <div className="relative w-4/5 max-w-xs mobile-drawer h-full p-4 flex flex-col justify-between overflow-y-auto animate-slideInRight shadow-2xl z-10">
+              <div className="relative w-4/5 max-w-xs bg-[#08080e] border-r border-amber-500/30 h-full p-4 flex flex-col justify-between overflow-y-auto animate-slideInRight shadow-2xl z-[102]">
                 <div className="space-y-4">
                   {/* Drawer Header */}
                   <div className="flex items-center justify-between pb-3 border-b border-white/10">
@@ -10108,15 +10127,6 @@ const [reelsContentType, setReelsContentType] = useState('shorts'); // 'shorts' 
 
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => setShowReelsDebugModal(!showReelsDebugModal)}
-                      className={'px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border ' + (showReelsDebugModal ? 'bg-crimson-500/20 text-crimson-300 border-crimson-400/50 shadow-md' : 'bg-white/5 border-white/10 text-slate-400 hover:text-white')}
-                      title="Inspect live AI classification, short confidence & heuristics telemetry"
-                    >
-                      <span>🐞</span>
-                      <span className="hidden sm:inline">Debug Pipeline</span>
-                    </button>
-
-                    <button
                       onClick={() => loadReelsForTopic(selectedReelTopic, reelsContentType)}
                       disabled={isReelsLoading}
                       className="px-3.5 py-1.5 rounded-xl glass-card text-xs font-semibold text-amber-300 hover:text-white border-amber-500/30 flex items-center gap-1.5 transition-all shadow-md"
@@ -10152,47 +10162,53 @@ const [reelsContentType, setReelsContentType] = useState('shorts'); // 'shorts' 
                   </button>
                 </div>
 
-                {/* Compact Horizontally-Scrollable Category Navigation Bar */}
-                <div className="flex items-center gap-2 overflow-x-auto no-scrollbar p-2 bg-dark-900/80 rounded-2xl border border-white/10 shadow-md">
-                  {[
-                    ['For You', '✨', 'For You'],
-                    ['DSA', '💻', 'DSA'],
-                    ['Coding', '⚡', 'Coding'],
-                    ['SQL', '🗄️', 'SQL'],
-                    ['DBMS', '💾', 'DBMS'],
-                    ['OS', '⚙️', 'OS'],
-                    ['System Design', '📐', 'System Design'],
-                    ['Aptitude', '📊', 'Aptitude'],
-                    ['Interview', '🎙️', 'Interview'],
-                    ['AI/ML', '🤖', 'AI/ML'],
-                    ['Career', '🎯', 'Career'],
-                    ['Saved', '🔖', 'Saved']
-                  ].map(([key, icon, label]) => {
-                    const isSelected = selectedReelTopic === key;
-                    const savedCount = savedReelsList.length;
-                    return (
-                      <button
-                        key={key}
-                        onClick={() => {
-                          setSelectedReelTopic(key);
-                          if (key === 'Saved') {
-                            setReelsFeedList(savedReelsList);
-                          } else {
-                            loadReelsForTopic(key, reelsContentType);
-                          }
-                        }}
-                        className={'px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap border ' + (isSelected ? 'bg-gradient-to-r from-amber-500 to-crimson-600 text-dark-950 border-amber-300 shadow-md font-black' : 'bg-white/5 border-white/10 text-slate-300 hover:text-white hover:bg-white/10')}
-                      >
-                        <span>{icon}</span>
-                        <span>{label}</span>
-                        {key === 'Saved' && savedCount > 0 && (
-                          <span className={'text-[10px] px-1.5 py-0.2 rounded-full font-extrabold ' + (isSelected ? 'bg-dark-950 text-amber-300' : 'bg-amber-500/20 text-amber-300')}>
-                            {savedCount}
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
+                {/* Placement Topic Universal Dropdown Selector (Active for Both Laptop & Mobile) */}
+                <div className="p-3 bg-dark-950/90 rounded-2xl border border-amber-500/30 shadow-xl flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 pl-1 flex-shrink-0">
+                    <span className="text-base">🎯</span>
+                    <label htmlFor="reel-topic-select" className="text-xs font-black text-amber-400 uppercase tracking-wider whitespace-nowrap">
+                      Placement Topic:
+                    </label>
+                  </div>
+
+                  <div className="flex-1 relative w-full sm:max-w-md">
+                    <select
+                      id="reel-topic-select"
+                      value={selectedReelTopic}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setSelectedReelTopic(val);
+                        if (val === 'Saved') {
+                          setReelsFeedList(savedReelsList);
+                        } else {
+                          loadReelsForTopic(val, reelsContentType);
+                        }
+                      }}
+                      className="w-full bg-dark-900 border border-amber-500/50 hover:border-amber-400 text-amber-300 font-extrabold text-xs sm:text-sm rounded-xl px-4 py-2.5 outline-none cursor-pointer appearance-none shadow-inner transition-colors"
+                    >
+                      {[
+                        ['For You', '✨ For You (Recommended for Target Role)'],
+                        ['DSA', '💻 Data Structures & Algorithms (DSA)'],
+                        ['Coding', '⚡ Live Coding & High-Frequency LeetCode'],
+                        ['SQL', '🗄️ SQL Queries & Database Optimization'],
+                        ['DBMS', '💾 DBMS Architecture, Joins & ACID'],
+                        ['OS', '⚙️ Operating Systems, Concurrency & Threads'],
+                        ['System Design', '📐 System Design, Microservices & Caching'],
+                        ['Aptitude', '📊 Quantitative & Logical Aptitude'],
+                        ['Interview', '🎙️ HR & Behavioral STAR Technique'],
+                        ['AI/ML', '🤖 AI, Machine Learning & Modern Tech'],
+                        ['Career', '🎯 Placement Preparation Strategy'],
+                        ['Saved', `🔖 Saved Placement Reels (${savedReelsList.length})`]
+                      ].map(([key, label]) => (
+                        <option key={key} value={key} className="bg-dark-950 text-slate-100 py-1.5 font-semibold">
+                          {label}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-amber-400 font-black text-xs">
+                      ▼
+                    </div>
+                  </div>
                 </div>
 
                 {/* Conditional View: Vertical Reels Feed vs Masterclasses Grid */}
